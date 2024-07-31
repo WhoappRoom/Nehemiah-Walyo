@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <title>Admin panel</title>
+    <style>
+      body{
+        background-color: #f3f3f3;
+        color: #000;
+        margin: 0;
+        padding: 0;
+      }
+      #app{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: none;
+        bottom: 0;
+        background-color: #fff;
+      }
+      #container-login, #load{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #form{
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        padding: 20px;
+        width: 400px;
+        border-radius: 4px;
+      }
+      input{
+        width: 92%;
+        padding: 15px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 20px;
+        outline: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        font-size: 18px;
+      }
+      #login{
+        width: 100%;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        border: none;
+        color: #fff;
+        margin-top: 20px;
+        padding: 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: #0076cc;
+      }
+      #spinner{
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        border: 4px solid #ccc;
+        animation: 1s load linear infinite;
+        border-top-color: #0076ff;
+      }
+      @keyframes load {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      button{
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        border: none;
+        color: #fff;
+        margin-top: 20px;
+        padding: 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: #0076cc;
+      }
+      #left-side{
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 45px;
+        padding: 10px;
+        border-right: 1px solid #ccc;
+        bottom: 0;
+      }
+      .containers{
+        bottom: 0;
+        background-color: #fff;
+        position: fixed;
+        right: 0;
+        top: 0;
+        display: none;
+        left: 70px;
+        padding: 10px;
+      }
+      #container-visitors{
+        display: none;
+        justify-content: center;
+        align-items: center;
+      }
+      #counts{
+        font-size: 48px;
+        font-weight: bold;
+        background: linear-gradient(to right, #ff7e5f, #feb47b);
+        text-align: center;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      textarea{
+        width: 95%;
+        height: 500px;
+        outline: none;
+        border: none;
+        font-size: 18px;
+        padding: 10px;
+        margin-top: 20px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        border-radius: 4px;
+      }
+      #max{
+        display: flex;
+        margin-top: 20px;
+        margin-right: 20px;
+        justify-content: end;
+      }
+      #counter{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+      }
+      progress{
+        height: 35px;
+      }
+      #update{
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        right: 0;
+        background-color: #f3f3f3;
+      }
+      #box{
+        width: 400px;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container-login">
+      <div id="form">
+        <h1>Login</h1>
+        <p>Login as admin</p>
+        <input type="email" placeholder="Email" id="email">
+        <input type="password" placeholder="Password" id="pass">
+        <button id="login">Login</button>
+      </div>
+      <div id="update">
+        <div id="box">
+          <input type="text" id="fullName" placeholder="What's your name?">
+          <input type="file" accept=".png, .jpg" id="fileImage" style="display: none;">
+          <div id="row">
+          <button id="choose" onclick="document.getElementById('fileImage').click();">Choose photo</button>
+          <button id="save">Save</button>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div id="app">
+      <div id="left-side">
+        <button id="home"><i class="fa fa-home"></i></button>
+        <button id="add"><i class="fa fa-plus"></i></button>
+        <button id="visitors"><i class="fa fa-eye"></i></button>
+      </div>
+      <div id="container-home" class="containers" style="display: block;">welcome home</div>
+      <div id="container-visitors" class="containers">
+        <span id="counts">Visitors<br>0</span>
+      </div>
+      <div id="container-add-post" class="containers">
+        <div id="container-post">
+          <input type="text" id="title" placeholder="Title">
+          <input type="file" id="file" accept=".png, .jpg, video/*" style="display: none">
+          <textarea id="description" placeholder="What's on your mind?" maxlength="300"></textarea>
+          <div id="max">
+            <span id="max-count">0/300</span>
+          </div>
+          <div id="row">
+            <button id="select">Choose photo</button>
+            <button id="post">Post</button>
+          </div>
+        </div>
+        <div id="counter" style="display: none;">
+          <progress value="0" max="100" style="width: 100%;" id="progress"></progress>
+        </div>
+      </div>
+    </div>
+    <div id="load">
+      <span id="spinner"></span>
+    </div>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+      import { getAuth, signInWithEmailAndPassword, updateProfile, signOut} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+      import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js';
+      const firebaseConfig = {
+        apiKey: "AIzaSyAqroFBiLs0JiqijGhrXpbgNkMplMmQs70",
+        authDomain: "whoapp-840f8.firebaseapp.com",
+        projectId: "whoapp-840f8",
+        storageBucket: "whoapp-840f8.appspot.com",
+        messagingSenderId: "245604477946",
+        appId: "1:245604477946:web:bba9a7ea55b5d3a1f25243"
+      };
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+      const storage = getStorage(app);
+      document.getElementById('login').addEventListener('click', function () {
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('pass').value;
+        signInWithEmailAndPassword(auth, email, password)
+        .then((result) => {
+          alert('Login Successfull');
+        }) .catch((error) => {
+          alert('Error: ' + error);
+        })
+      })
+      auth.onAuthStateChanged((user) => {
+        if(user) {
+          if(user.photoURL === null) {
+            document.getElementById('update').style.display = 'flex';
+          } else if(user.displayName === null) {
+            document.getElementById('update').style.display = 'flex';
+          } else {
+            document.getElementById('app').style.display = 'block';
+          document.getElementById('container-login').style.display = 'none';
+          }
+          document.getElementById('load').style.display = 'none';
+          
+        } else {
+          document.getElementById('app').style.display = 'none';
+          document.getElementById('load').style.display = 'none';
+          document.getElementById('container-login').style.display = 'flex';
+        }
+      })
+      document.getElementById('home').addEventListener('click', function () {
+        document.getElementById('container-home').style.display = 'block';
+        document.getElementById('container-add-post').style.display = 'none';
+        document.getElementById('container-visitors').style.display = 'none';
+      })
+      document.getElementById('add').addEventListener('click', function () {
+        document.getElementById('container-add-post').style.display = 'block';
+        document.getElementById('container-home').style.display = 'none';
+        document.getElementById('container-visitors').style.display = 'none';
+      })
+      document.getElementById('visitors').addEventListener('click', function () {
+        document.getElementById('container-visitors').style.display = 'flex';
+        document.getElementById('container-home').style.display = 'none';
+        document.getElementById('container-add-post').style.display = 'none';
+      })
+      onSnapshot(collection(db, 'visitors'), (querySnapshot) => {
+        let totalCounts = 0;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          totalCounts += data.count || 0;
+          document.getElementById('counts').innerHTML = `Visitors <br> ${totalCounts}`;
+        })
+      })
+      document.getElementById('description').addEventListener('input', function () {
+        var input = this.value;
+        document.getElementById('max-count').innerText = `${input.length}/300`;
+      })
+      document.getElementById('select').addEventListener('click', function () {
+        document.getElementById('file').click();
+      })
+      document.getElementById('post').addEventListener('click', function () {
+    var file = document.getElementById('file').files[0];
+    var title = document.getElementById('title').value;
+    var description = document.getElementById('description').value;
+    
+    if (!file) {
+        alert('Please select a file image');
+        return;
+    }
+    
+    if (!title) {
+        alert('Please enter a title');
+        return;
+    }
+
+    if (file) {
+        const storageRef = ref(storage, `images/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+        
+        function fileType(file) {
+          if(file.type.startsWith('image')) {
+            return'image';
+          } else if(file.type.startsWith('video')) {
+            return'video';
+          }
+        }
+        uploadTask.on('state_changed', (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            document.getElementById('counter').style.display = 'flex';
+            document.getElementById('progress').value = progress;
+        }, (error) => {
+            alert('Error: ' + error.message);
+            document.getElementById('counter').style.display = 'none';
+            document.getElementById('progress').value = 0;
+        }, () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                const user = auth.currentUser;
+                return addDoc(collection(db, 'posts'), {
+                    url: url,
+                    title: title,
+                    description: description,
+                    username: user.displayName,
+                    fileType: fileType(file),
+                    userImage: user.photoURL,
+                    uid: user.uid,
+                    time: new Date()
+                });
+            }).then(() => {
+                document.getElementById('counter').style.display = 'none';
+                document.getElementById('progress').value = 0;
+                alert('Successful post published');
+            }).catch((error) => {
+                alert('Error: ' + error.message);
+                document.getElementById('counter').style.display = 'none';
+                document.getElementById('progress').value = 0;
+            });
+        });
+    }
+});
+      onSnapshot(collection(db, 'posts'), (query) => {
+        query.forEach((doc) => {
+          const data = doc.data();
+          console.log(data)
+        })
+      })
+      document.getElementById('save').addEventListener('click', function () {
+        var file = document.getElementById('fileImage').files[0];
+        var fullName = document.getElementById('fullName').value;
+        if(!file) {
+          alert('Please choose image');
+          return;
+        }
+        if(!fullName) {
+          alert('Please enter full name');
+          return;
+        }
+        if(file) {
+          const storageRef = ref(storage, `ptofileImages/${file.name}`);
+          const uploadTask = uploadBytesResumable(storageRef, file);
+          uploadTask.on('state_changed', (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(progress + '%')
+          }, (error) => {
+            alert(error)
+          }, () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+              const user = auth.currentUser;
+              return updateProfile(user, {
+                photoURL: url,
+                displayName: fullName
+              })
+            })
+          })
+        }
+      });
+    </script>
+  </body>
+</html>
